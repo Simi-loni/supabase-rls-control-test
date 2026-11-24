@@ -1,0 +1,8 @@
+schemaname,tablename,policyname,permissive,roles,cmd,qual,with_check
+public,customers,Owners read own,PERMISSIVE,{authenticated},SELECT,(auth.uid() = owner_id),
+public,customers,Owners update own,PERMISSIVE,{authenticated},UPDATE,(auth.uid() = owner_id),(auth.uid() = owner_id)
+public,orders,Owners manage own orders,PERMISSIVE,{authenticated},ALL,((SELECT auth.uid() AS uid) = user_id),((SELECT auth.uid() AS uid) = user_id)
+public,profiles,Signed in users read profiles,PERMISSIVE,{authenticated},SELECT,(auth.role() = 'authenticated'::text),
+public,reference_countries,Public read reference data,PERMISSIVE,{public},SELECT,true,
+public,support_notes,Anyone can read notes,PERMISSIVE,{public},SELECT,true,
+public,support_notes,Anyone can add notes,PERMISSIVE,{anon},INSERT,,true
