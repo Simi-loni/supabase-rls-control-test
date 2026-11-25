@@ -1,0 +1,16 @@
+schemaname,tablename,policyname,permissive,roles,cmd,qual,with_check
+public,comments,Signed in users read comments,PERMISSIVE,{authenticated},SELECT,(auth.role() = 'authenticated'::text),
+public,feature_flags,Public read flags,PERMISSIVE,{public},SELECT,true,
+public,files_metadata,Owners manage own files,PERMISSIVE,{authenticated},ALL,((SELECT auth.uid() AS uid) = owner_id),((SELECT auth.uid() AS uid) = owner_id)
+public,invoices,Admins read invoices,PERMISSIVE,{authenticated},SELECT,(((auth.jwt() -> 'user_metadata'::text) ->> 'role'::text) = 'admin'::text),
+public,org_members,Members read own membership,PERMISSIVE,{authenticated},SELECT,(user_id = auth.uid()),
+public,organisations,Members read their organisation,PERMISSIVE,{authenticated},SELECT,(id IN ( SELECT org_members.org_id FROM org_members WHERE (org_members.user_id = auth.uid()))),
+public,profiles,Users read own profile,PERMISSIVE,{authenticated},SELECT,(auth.uid() = id),
+public,profiles,Users update own profile,PERMISSIVE,{authenticated},UPDATE,(auth.uid() = id),(auth.uid() = id)
+public,projects,Members read projects,PERMISSIVE,{authenticated},SELECT,(org_id IN ( SELECT org_members.org_id FROM org_members WHERE (org_members.user_id = auth.uid()))),
+public,projects,Admins manage projects,PERMISSIVE,{authenticated},ALL,(EXISTS ( SELECT 1 FROM org_members m WHERE ((m.org_id = projects.org_id) AND (m.user_id = auth.uid()) AND (m.role = 'admin'::text)))),(EXISTS ( SELECT 1 FROM org_members m WHERE ((m.org_id = projects.org_id) AND (m.user_id = auth.uid()) AND (m.role = 'admin'::text))))
+public,reference_countries,Public read reference data,PERMISSIVE,{public},SELECT,true,
+public,support_notes,Anyone can read notes,PERMISSIVE,{public},SELECT,true,
+public,support_notes,Anyone can add notes,PERMISSIVE,{anon},INSERT,,true
+public,tasks,Members manage tasks,PERMISSIVE,{authenticated},ALL,(org_id IN ( SELECT org_members.org_id FROM org_members WHERE (org_members.user_id = auth.uid()))),(org_id IN ( SELECT org_members.org_id FROM org_members WHERE (org_members.user_id = auth.uid())))
+public,user_roles,Users read own roles,PERMISSIVE,{authenticated},SELECT,(user_id = auth.uid()),
