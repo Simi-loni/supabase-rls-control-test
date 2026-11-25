@@ -86,4 +86,4 @@ Do this by hand, and only on a project you own that holds no real customer data.
 
 ## About this project
 
-I work in GRC and I am learning to code. I built this with AI assistance (Claude) and went through the script until I could explain it. The control mapping and the audit approach are mine to defend. The sample data is fictional.
+I work in GRC and I am learning to code. I built this with AI assistance and went through the script until I could explain it. The control mapping and the audit approach are mine. The sample data is fictional.
