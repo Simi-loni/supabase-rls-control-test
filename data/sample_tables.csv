@@ -1,0 +1,16 @@
+schema_name,table_name,rls_enabled,rls_forced,policy_count,anon_can_select,authenticated_can_select
+public,api_keys,false,false,0,true,true
+public,audit_events,true,false,0,true,true
+public,comments,true,false,1,true,true
+public,feature_flags,true,false,1,true,true
+public,files_metadata,true,false,1,true,true
+public,internal_cache,false,false,0,false,false
+public,invoices,true,false,1,true,true
+public,org_members,true,false,1,true,true
+public,organisations,true,false,1,true,true
+public,profiles,true,false,2,true,true
+public,projects,true,false,2,true,true
+public,reference_countries,true,false,1,true,true
+public,support_notes,true,false,2,true,true
+public,tasks,true,false,1,true,true
+public,user_roles,true,false,1,true,true
