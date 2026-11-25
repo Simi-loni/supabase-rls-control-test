@@ -18,8 +18,30 @@ All data in this repo is invented sample data. No real project is tested.
 | P2 | A policy that allows unconditional access, meaning USING (true) or WITH CHECK (true) | Failure |
 | P3 | A policy that only checks that the user is signed in, not that the row is theirs | For review |
 | P4 | A table with RLS on and no policies, which denies API roles | For review |
+| P5 | A policy that relies on user_metadata, which users can edit themselves | Failure |
+
+Why P3 is only a sign-in check: anonymous sign-ins use the authenticated role too, so "signed in" does not mean "entitled to this row".
 
 Controls supported: SOC 2 CC6.1 and CC6.3, ISO/IEC 27001:2022 Annex A 5.15 and A 8.3. Check the mapping against your own copy of the standards.
+
+## Sample data
+
+The sample project is a made-up team collaboration app with 15 tables. Each table is there to trigger one result.
+
+| Table | Scenario | Expected result |
+|---|---|---|
+| api_keys | RLS off, readable by API roles | P1 failure |
+| invoices | Policy decides access from user_metadata | P5 failure |
+| support_notes | Public read with no exception, and a public insert whose exception has expired | Two P2 failures |
+| reference_countries | Public read with an exception that has no named approver | P2 failure |
+| feature_flags | Public read with a valid, signed, unexpired exception | Accepted exception |
+| comments | Policy checks only that the user is signed in | P3 review |
+| audit_events | RLS on, no policies | P4 review |
+| organisations, org_members, projects, tasks | Access limited through organisation membership | No issue |
+| profiles, files_metadata, user_roles | Access limited to the owner's rows | No issue |
+| internal_cache | RLS off, but not readable by API roles | No issue |
+
+The full output on this data is in `examples/sample_workpaper.txt`: 5 failures, 2 items for review, 1 accepted exception, and 8 tables with no issue.
 
 ## How to use it
 
@@ -36,11 +58,9 @@ python3 scripts/rls_control_test.py data/sample_tables.csv data/sample_policies.
 
 The date at the end is the test date. The sample exceptions were written around it. Without it, the script uses today's date.
 
-On the sample data the test finds 3 failures, 2 items for review, 1 accepted exception, and 3 tables with no issue.
-
 ## Exceptions
 
-A P1 or P2 failure can be accepted only if the exceptions file names who approved it and the exception has not expired. A missing approver or an expired date leaves the failure open. This is the same rule as risk acceptance in my grc-risk-toolkit repo.
+A P1, P2 or P5 failure can be accepted only if the exceptions file names who approved it and the exception has not expired. A missing approver or an expired date leaves the failure open. This is the same rule as risk acceptance in my grc-risk-toolkit repo.
 
 ## How to test that the policies actually work
 
@@ -59,7 +79,11 @@ Do this by hand, and only on a project you own that holds no real customer data.
 - The population is only as complete as the schemas you export. Supabase's own linter notes that some of its checks cover only the exposed schemas, so export every schema the Data API exposes.
 - The SQL queries are standard Postgres catalog queries. I wrote the test on sample data and have not yet run the queries against a live project.
 
+## Next steps
+
+- Run it on a throwaway project and add the real output.
+- Read Security Advisor findings directly. Supabase exposes them through its CLI and Management API, so the test could take that output as another input.
+
 ## About this project
 
-I work in GRC and I am learning to code. I built this with AI assistance and went through the script until I could explain it. The control mapping and the audit approach are mine to defend. The sample data is fictional.
-
+I work in GRC and I am learning to code. I built this with AI assistance (Claude) and went through the script until I could explain it. The control mapping and the audit approach are mine to defend. The sample data is fictional.
