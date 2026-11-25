@@ -1,3 +1,0 @@
-table_name,policy_name,check_id,reason,approved_by,approved_date,table_name,policy_name,check_id,reason,approved_by,approved_date,expires
-reference_countries,Public read reference data,P2,Static country list with no personal data,CISO,2026-10-01,2027-10-01
-support_notes,Anyone can add notes,P2,Temporary intake form,Head of Support,2026-06-01,2026-09-30
