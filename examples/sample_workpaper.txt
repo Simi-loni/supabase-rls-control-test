@@ -1,0 +1,28 @@
+RLS CONTROL TEST WORKPAPER
+Test date: 2026-11-23
+Controls: SOC 2 CC6.1, CC6.3. ISO 27001 Annex A 5.15, A 8.3
+Population: 15 tables, 15 policies
+Procedure: checks P1 to P5 on the exported catalog data
+
+FAILURES (5)
+  [P1] public.api_keys: RLS is off and anon or authenticated can read the table
+  [P5] public.invoices, policy 'Admins read invoices' (SELECT, roles authenticated): policy relies on user_metadata, which the signed-in user can edit
+  [P2] public.reference_countries, policy 'Public read reference data' (SELECT, roles public): policy allows unconditional access (exception has no named approver)
+  [P2] public.support_notes, policy 'Anyone can read notes' (SELECT, roles public): policy allows unconditional access
+  [P2] public.support_notes, policy 'Anyone can add notes' (INSERT, roles anon): policy allows unconditional access (exception has expired)
+
+FOR REVIEW (2)
+  [P4] public.audit_events: RLS is on with no policies, so API roles are denied. Confirm this is intended
+  [P3] public.comments, policy 'Signed in users read comments' (SELECT, roles authenticated): only checks that the user is signed in, not that the row is theirs
+
+ACCEPTED EXCEPTIONS (1)
+  [P2] public.feature_flags, policy 'Public read flags' (SELECT, roles public): policy allows unconditional access
+      approved by Head of Engineering on 2026-10-01, expires 2027-10-01
+      reason: Non-sensitive feature toggles, no personal data
+
+NO ISSUE FOUND (8): public.files_metadata, public.internal_cache, public.org_members, public.organisations, public.profiles, public.projects, public.tasks, public.user_roles
+
+Reviewer: ______________  Date: ____________
+Note: this reads policy text. It does not prove the policies work.
+
+RESULT: FAIL. 5 unaccepted failure(s).
